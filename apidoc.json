@@ -1,0 +1,9 @@
+{
+  "name": "mail service",
+  "description": "mail service api doc",
+  "url": "http://..",
+  "version":"1.0.0",
+  "template": {
+
+  }
+}

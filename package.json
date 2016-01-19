@@ -1,0 +1,13 @@
+{
+  "name": "api-solution-mailer",
+  "version": "1.0.0",
+  "description": "mail service",
+  "main": "mailer.js",
+  "scripts": {
+    "test": "node_modules/.bin/jsdoc",
+    "doc": "apidoc -f .js -f .apidoc-header"
+  },
+  "author": "farcek@gmail.com",
+  "license": "ISC",
+  "private": true
+}
