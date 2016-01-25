@@ -1,8 +1,12 @@
 /**
-* @apiDefine OkSuccess
+* @apiDefine OkResult
 * @apiSuccess {boolean=true} result
 */
 
+/**
+* @apiDefine TrueFalseResult
+* @apiSuccess {boolean=true,false} result
+*/
 
 /**
  * @apiDefine ErrorResp
