@@ -1,15 +1,12 @@
 var foduler = require('foduler');
-var config = require('./config');
 
 var mailer = foduler.module('mailer')
-    .include(require('foduler/module-web'))
+    .include(require('foduler/module-web')(foduler))
     .include(require('./service'))
     .include(require('./routes'))
     .include(require('./model'))
-
-    .factory('config', function () {
-        return config;
-    })
+    .include(require('./model/shared app'))
+    .value('config', require('./config'))
 
     .config(['$web:express', '$web:app',// static assets
         function (express, app) {

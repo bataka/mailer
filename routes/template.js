@@ -2,12 +2,26 @@
  * @apiDefine AppId
  * @apiParam (url) {String} app application id
  */
-module.exports = ['mailer-base router', '$web:routerFactory', 'models:model', '$web:body-parser', '$lodash',
-    function (base, factory, Model, bodyParser, _) {
+module.exports = ['mailer-base router', '$web:routerFactory', 'models:model', '$web:body-parser', '$lodash', 'sa:model',
+    function (base, factory, Model, bodyParser, _, SaModel) {
 
         var router = factory('/template/:appId', {
             base: base,
-            options: {mergeParams: true}
+            options: {mergeParams: true},
+            before: function (req, res, next) {
+
+                return SaModel.AppConfigMailer.findById(req.params.appId)
+                    .then(function (conf) {
+                        if (conf && conf.active)
+                            return next();
+                        throw {
+                            name: 'MailerService',
+                            status: 400,
+                            message: 'Mailer Service is not active'
+                        };
+                    })
+                    .catch(next);
+            }
         });
 
         /**
@@ -20,8 +34,6 @@ module.exports = ['mailer-base router', '$web:routerFactory', 'models:model', '$
                     where: {
                         appId: req.params.appId
                     }
-                }).then(function (data) {
-                    return data;
                 });
             });
         });

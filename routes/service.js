@@ -3,15 +3,28 @@
  * @apiParam (url) {String} app application id
  */
 
-module.exports = ['mailer-base router', '$web:routerFactory', 'models:model', '$lodash', '$web:body-parser', 'ms:runner',
-    function (base, factory, Model, _, bodyParser, runner) {
+module.exports = ['mailer-base router', '$web:routerFactory', 'models:model', '$lodash', '$web:body-parser', 'ms:runner', 'sa:model', '$Promise',
+    function (base, factory, Model, _, bodyParser, runner, SaModel, Promise) {
 
 
         var router = factory('/service/:appId', {
             base: base,
-            options: {mergeParams: true}
-        });
+            options: {mergeParams: true},
+            before: function (req, res, next) {
 
+                return SaModel.AppConfigMailer.findById(req.params.appId)
+                    .then(function (conf) {
+                        if (conf && conf.active)
+                            return next();
+                        throw {
+                            name: 'MailerService',
+                            status: 400,
+                            message: 'Mailer Service is not active'
+                        };
+                    })
+                    .catch(next);
+            }
+        });
 
         /**
          * @api {post} /service/:appId/send send mail
@@ -109,6 +122,33 @@ module.exports = ['mailer-base router', '$web:routerFactory', 'models:model', '$
                     });
             });
 
+        });
+
+
+        /**
+         * @api {get} /service/:app/logs get last 50 mails of application
+         * @apiName serviceLogs
+         * @apiGroup service
+         * @apiSuccess {String} status last 50 mails of application
+         */
+        router.get('/logs', function (req, res) {
+            res.promiseJson(function () {
+                var appId = req.params.appId;
+
+                return Model.Mail
+                    .findAll({
+                        where: {appId: appId},
+                        order: 'createdAt DESC',
+                        limit: 50
+                    })
+                    .then(function (data) {
+                        return Promise.map(data, function (it) {
+                            it.status = Model.Mail.statusLabelFromValue(it.status);
+                            return it;
+                        })
+                    });
+
+            });
         });
     }
 ];
