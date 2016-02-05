@@ -7,6 +7,7 @@ module.exports = {
         port: '4040',
         pool: false
     },
+    mandrillApiKey: 'eL1aOT2OZAHqAPHdo3ehPg',
     byte: {
         domain: 'localhost',
         port: '4000',

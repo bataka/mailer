@@ -7,7 +7,6 @@ module.exports = ['Sequelize', 'sequelize instance',
             type: {type: Sequelize.STRING, defaultValue: 'plain'},
             content: {type: Sequelize.TEXT, allowNull: false}
         });
-
         return Template;
     }
 ];

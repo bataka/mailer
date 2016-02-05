@@ -3,13 +3,8 @@ module.exports = ['Sequelize', 'sequelize instance',
         var AppConfigMailer = sqInstance.define('app_config_mails', {
                 app: {type: Sequelize.INTEGER, primaryKey: true, allowNull: false},
                 active: {type: Sequelize.BOOLEAN, defaultValue: false}
-            },
-            {
-                classMethods: {}
             }
         );
-
-
         return AppConfigMailer;
     }
 ];

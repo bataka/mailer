@@ -1,8 +1,9 @@
 var foduler = require('foduler');
 var Swig = require('swig');
+var config = require('../config');
 
 var mandrill = require('mandrill-api/mandrill');
-var mandrill_client = new mandrill.Mandrill('eL1aOT2OZAHqAPHdo3ehPg');
+var mandrill_client = new mandrill.Mandrill(config.mandrillApiKey);
 
 module.exports = foduler.module('mailer-service').as('ms')
     .factory('config', [
@@ -70,7 +71,7 @@ module.exports = foduler.module('mailer-service').as('ms')
             }
         }
     ])
-    .factory('mailSender', ['$lodash',
+    .factory('mandrillSender', ['$lodash',
         function (_) {
 
             function generateMsg(options) {
@@ -119,8 +120,8 @@ module.exports = foduler.module('mailer-service').as('ms')
             }
         }
     ])
-    .factory('sender', ['mailMgr', 'tplMgr', 'renderTpl', 'mailSender',
-        function (mailMgr, tplMgr, renderTpl, mailSender) {
+    .factory('sender', ['mailMgr', 'tplMgr', 'renderTpl', 'mandrillSender',
+        function (mailMgr, tplMgr, renderTpl, mandrillSender) {
 
             var mail = {};
 
@@ -149,11 +150,11 @@ module.exports = foduler.module('mailer-service').as('ms')
                                             } else  //IF TEMPLATE NOT FOUND
                                                 mailOptions.html = m.params;
 
-                                            return mailSender.send(mailOptions);
+                                            return mandrillSender.send(mailOptions);
                                         })
                                 } else {    //IF MAIL HAS NOT A TEMPLATE
                                     mailOptions.html = m.body;
-                                    return mailSender.send(mailOptions);
+                                    return mandrillSender.send(mailOptions);
                                 }
                             } else {    //IF MAIL NOT FOUND
                                 return {
@@ -193,7 +194,6 @@ module.exports = foduler.module('mailer-service').as('ms')
                 run: function () {
                     sender.send()
                         .then(function (result) {
-                            GLOBAL.TestStatus = result.status;
                             mail = sender.getMail();
                             if (result.status == 'sent') {
                                 Model.Mail

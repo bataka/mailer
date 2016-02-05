@@ -23,15 +23,10 @@ module.exports = ['Sequelize', 'sequelize instance',
                         if (val == StatusEnums[s])
                             return s;
                     }
-
                     return null;
                 }
-
             }
         });
-
         return Mail;
-
-
     }
 ];
